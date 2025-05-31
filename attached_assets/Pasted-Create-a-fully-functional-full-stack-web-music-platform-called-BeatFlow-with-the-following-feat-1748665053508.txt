@@ -1,0 +1,56 @@
+Create a fully functional full-stack web music platform called **BeatFlow**, with the following features:
+
+🌐 **Frontend:**
+- Built with **React.js** and **Tailwind CSS**, using **Framer Motion** for smooth transitions and animations.
+- Layout and visuals must follow a bold, glowing gradient style like the attached reference image.
+- Use the font **PP Neue Montreal** (or a similar modern geometric sans-serif) and color palette:
+  - Orange: `#FB6E1D`
+  - Yellow: `#F8DE6F`
+  - Light Blue: `#1CDBFF`
+  - Dark Green: `#040A06`
+  - White: `#FFFFFF`
+- UI elements:
+  - Hero section with animated background and a 3D-rendered avatar wearing headphones.
+  - Suggested songs list with thumbnail, artist, duration, and play button.
+  - "Top Tunes of the Day" section.
+  - Button to download the app.
+  - Music player with full playback controls.
+  - Login/Register system.
+  - Language switcher (EN/TJ/RU).
+  - Responsive design for mobile and desktop.
+
+⚙️ **Backend:**
+- Built with **Node.js + Express** or **Django (Python)** — choose the stack most compatible with Replit.
+- REST API endpoints:
+  - `GET /songs` — fetch all songs
+  - `POST /upload` — upload a new song (only for registered users)
+  - `GET /playlists/:userId` — get user playlists
+  - `POST /playlists` — create a new playlist
+  - `POST /auth/register` and `POST /auth/login` — authentication
+- Store user data, playlists, and uploaded songs in a **MongoDB** or **PostgreSQL** database (Replit-compatible).
+- JWT-based authentication system.
+- File storage: use Replit storage or local files for uploaded songs.
+- Include CORS, rate-limiting, and input validation.
+
+🧠 **Advanced Features:**
+- Music streaming with audio player.
+- Option to download tracks.
+- Personalized recommendations (mocked or basic logic).
+- Stats counter (e.g., 5.2M plays).
+- Dark mode by default with strong contrast.
+- Secure login and session management.
+- Admin panel (simple, for moderating songs/users).
+
+📦 **Structure:**
+- Frontend in `/client`
+- Backend in `/server`
+- Shared folder `/shared` for interfaces or common logic (if applicable)
+
+🧪 Provide sample seed data:
+- At least 5 users, 10 songs, and 2 example playlists.
+
+🖼️ **Design style must match the provided references**: bold gradients, glowing effects, minimalistic layout, intuitive UX, high-contrast elements, and futuristic vibe. UI should look alive and immersive — this is not a flat design.
+
+🎧 The app is for users who want to discover, stream, and manage music easily, with smooth flow and energetic UI. Think of it as a next-gen SoundCloud + Spotify with more vibes.
+
+Deploy the project so I can preview it instantly inside Replit.

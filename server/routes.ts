@@ -23,16 +23,16 @@ const upload = multer({
       if (file.mimetype.startsWith('audio/')) {
         cb(null, true);
       } else {
-        cb(new Error('Only audio files allowed'), false);
+        cb(new Error('Only audio files allowed'));
       }
     } else if (file.fieldname === 'cover') {
       if (file.mimetype.startsWith('image/')) {
         cb(null, true);
       } else {
-        cb(new Error('Only image files allowed'), false);
+        cb(new Error('Only image files allowed'));
       }
     } else {
-      cb(new Error('Unknown field'), false);
+      cb(new Error('Unknown field'));
     }
   }
 });
@@ -91,7 +91,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/songs/top-tunes', async (req, res) => {
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 10;
+      const limitParam = req.query.limit as string;
+      const limit = limitParam && !isNaN(parseInt(limitParam)) ? parseInt(limitParam) : 10;
       const topTunes = await storage.getTopTunes(limit);
       res.json(topTunes);
     } catch (error) {
@@ -102,11 +103,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/songs/suggested', async (req, res) => {
     try {
-      const limit = req.query.limit ? parseInt(req.query.limit as string) : 20;
+      const limitParam = req.query.limit as string;
+      const limit = limitParam && !isNaN(parseInt(limitParam)) ? parseInt(limitParam) : 20;
       let userId: string | undefined;
       
-      if (req.user?.claims?.sub) {
-        userId = req.user.claims.sub;
+      if ((req.user as any)?.claims?.sub) {
+        userId = (req.user as any).claims.sub;
       }
       
       const suggestions = await storage.getSuggestedSongs(userId, limit);
