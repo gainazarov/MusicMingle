@@ -53,42 +53,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Song routes
-  app.get('/api/songs', async (req, res) => {
-    try {
-      const songs = await storage.getSongs();
-      res.json(songs);
-    } catch (error) {
-      console.error("Error fetching songs:", error);
-      res.status(500).json({ message: "Failed to fetch songs" });
-    }
-  });
-
-  app.get('/api/songs/:id', async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      const song = await storage.getSong(id);
-      if (!song) {
-        return res.status(404).json({ message: "Song not found" });
-      }
-      res.json(song);
-    } catch (error) {
-      console.error("Error fetching song:", error);
-      res.status(500).json({ message: "Failed to fetch song" });
-    }
-  });
-
-  app.post('/api/songs/:id/play', async (req, res) => {
-    try {
-      const id = parseInt(req.params.id);
-      await storage.updateSongPlays(id);
-      res.json({ success: true });
-    } catch (error) {
-      console.error("Error updating song plays:", error);
-      res.status(500).json({ message: "Failed to update song plays" });
-    }
-  });
-
+  // Song routes - specific routes before parameterized routes
   app.get('/api/songs/top-tunes', async (req, res) => {
     try {
       const limitParam = req.query.limit as string;
@@ -116,6 +81,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching suggested songs:", error);
       res.status(500).json({ message: "Failed to fetch suggested songs" });
+    }
+  });
+
+  app.get('/api/songs', async (req, res) => {
+    try {
+      const songs = await storage.getSongs();
+      res.json(songs);
+    } catch (error) {
+      console.error("Error fetching songs:", error);
+      res.status(500).json({ message: "Failed to fetch songs" });
+    }
+  });
+
+  app.get('/api/songs/:id', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid song ID" });
+      }
+      const song = await storage.getSong(id);
+      if (!song) {
+        return res.status(404).json({ message: "Song not found" });
+      }
+      res.json(song);
+    } catch (error) {
+      console.error("Error fetching song:", error);
+      res.status(500).json({ message: "Failed to fetch song" });
+    }
+  });
+
+  app.post('/api/songs/:id/play', async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "Invalid song ID" });
+      }
+      await storage.updateSongPlays(id);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error updating song plays:", error);
+      res.status(500).json({ message: "Failed to update song plays" });
     }
   });
 
