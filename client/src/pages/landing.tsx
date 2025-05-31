@@ -14,9 +14,6 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="hero-gradient min-h-screen flex items-center pt-16 relative overflow-hidden">
         {/* Floating Orbs */}
-        <div className="floating-orb w-64 h-64 top-20 left-10 animate-orb-float"></div>
-        <div className="floating-orb-blue w-48 h-48 top-40 right-20 animate-orb-float" style={{ animationDelay: '2s' }}></div>
-        <div className="floating-orb-yellow w-32 h-32 bottom-32 left-1/4 animate-orb-float" style={{ animationDelay: '4s' }}></div>
         
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">

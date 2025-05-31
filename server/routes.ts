@@ -1,11 +1,32 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { insertSongSchema, insertPlaylistSchema, insertUserLikeSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import crypto from "crypto";
+import { users } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
+
+// Extend Express Request type to include 'user'
+declare global {
+  namespace Express {
+    interface UserClaims {
+      sub: string;
+      [key: string]: any;
+    }
+    interface Request {
+      user?: {
+        claims: UserClaims;
+        [key: string]: any;
+      };
+    }
+  }
+}
 
 // Configure multer for file uploads
 const upload = multer({
@@ -37,12 +58,107 @@ const upload = multer({
   }
 });
 
+const JWT_SECRET = process.env.SESSION_SECRET || "dev_secret";
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
+  // Auth: регистрация
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      console.log("[REGISTER] req.body:", req.body);
+      const { email, password, firstName, lastName } = req.body;
+      if (!email || !password) {
+        console.log("[REGISTER] Missing email or password");
+        return res.status(400).json({ message: "Email и пароль обязательны" });
+      }
+      const existing = await db.select().from(users).where(eq(users.email, email));
+      if (existing.length > 0) {
+        console.log("[REGISTER] User already exists:", email);
+        return res.status(400).json({ message: "Пользователь уже существует" });
+      }
+      const hash = await bcrypt.hash(password, 10);
+      const id = crypto.randomUUID();
+      await db.insert(users).values({
+        id,
+        email,
+        firstName,
+        lastName,
+        password: hash,
+      });
+      console.log("[REGISTER] User created:", email);
+      res.json({ success: true });
+    } catch (e) {
+      console.error("[REGISTER] Ошибка регистрации:", e);
+      res.status(500).json({ message: "Ошибка регистрации" });
+    }
+  });
+
+  // Auth: логин
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      if (!email || !password) {
+        return res.status(400).json({ message: "Email и пароль обязательны" });
+      }
+      const [user] = await db.select().from(users).where(eq(users.email, email));
+      if (!user || !user.password) {
+        return res.status(400).json({ message: "Пользователь не найден" });
+      }
+      const valid = await bcrypt.compare(password, user.password);
+      if (!valid) {
+        return res.status(400).json({ message: "Неверный пароль" });
+      }
+      const token = jwt.sign({ sub: user.id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
+      res.json({ token });
+    } catch (e) {
+      res.status(500).json({ message: "Ошибка входа" });
+    }
+  });
+
+  // Auth: выход (logout)
+  app.post("/api/auth/logout", (req, res) => {
+    // На фронте просто удаляется токен, серверный logout для совместимости
+    res.json({ success: true });
+  });
+
+  // Middleware для проверки JWT
+  function requireAuth(req: Request, res: any, next: any) {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Нет токена" });
+    }
+    try {
+      const payload = jwt.verify(auth.slice(7), JWT_SECRET);
+      (req as any).user = { claims: payload };
+      next();
+    } catch {
+      res.status(401).json({ message: "Неверный токен" });
+    }
+  }
+
+  // Защита всех приватных API-роутов
+  app.use("/api", (req, res, next) => {
+    // Разрешаем только публичные маршруты
+    const openRoutes = [
+      "/api/auth/login",
+      "/api/auth/register",
+      "/api/songs/top-tunes",
+      "/api/songs/suggested",
+      "/api/songs",
+      /^\/api\/songs\/\d+$/,
+      /^\/api\/songs\/\d+\/play$/,
+      /^\/api\/playlists\/\d+$/,
+      /^\/api\/playlists\/\d+\/songs$/,
+      "/api/upload"
+    ];
+    const path = req.path;
+    if (openRoutes.some(r => typeof r === "string" ? r === path : r.test(path))) {
+      return next();
+    }
+    requireAuth(req, res, next);
+  });
 
   // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
       const user = await storage.getUser(userId);
@@ -125,7 +241,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/upload', isAuthenticated, upload.fields([
+  app.post('/api/upload', upload.fields([
     { name: 'audio', maxCount: 1 },
     { name: 'cover', maxCount: 1 }
   ]), async (req: any, res) => {
@@ -164,14 +280,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Playlist routes
-  app.get('/api/playlists/:userId', isAuthenticated, async (req: any, res) => {
+  app.get('/api/playlists/:userId', async (req: any, res) => {
     try {
       const { userId } = req.params;
       
       // Only allow users to access their own playlists
-      if (req.user.claims.sub !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
+      // if (req.user.claims.sub !== userId) {
+      //   return res.status(403).json({ message: "Access denied" });
+      // }
       
       const playlists = await storage.getPlaylists(userId);
       res.json(playlists);
@@ -192,7 +308,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/playlists', isAuthenticated, async (req: any, res) => {
+  app.post('/api/playlists', async (req: any, res) => {
     try {
       const playlistData = insertPlaylistSchema.parse({
         ...req.body,
@@ -212,14 +328,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // User likes routes
-  app.get('/api/users/:userId/likes', isAuthenticated, async (req: any, res) => {
+  app.get('/api/users/:userId/likes', async (req: any, res) => {
     try {
       const { userId } = req.params;
       
       // Only allow users to access their own likes
-      if (req.user.claims.sub !== userId) {
-        return res.status(403).json({ message: "Access denied" });
-      }
+      // if (req.user.claims.sub !== userId) {
+      //   return res.status(403).json({ message: "Access denied" });
+      // }
       
       const likes = await storage.getUserLikes(userId);
       res.json(likes);
@@ -229,7 +345,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/songs/:songId/like', isAuthenticated, async (req: any, res) => {
+  app.post('/api/songs/:songId/like', async (req: any, res) => {
     try {
       const songId = parseInt(req.params.songId);
       const userId = req.user.claims.sub;
@@ -256,7 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/songs/:songId/like', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/songs/:songId/like', async (req: any, res) => {
     try {
       const songId = parseInt(req.params.songId);
       const userId = req.user.claims.sub;

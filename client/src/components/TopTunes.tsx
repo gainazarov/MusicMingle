@@ -8,6 +8,7 @@ import { Play, TrendingUp } from "lucide-react";
 export default function TopTunes() {
   const { playTrack } = useMusicPlayer();
 
+  // Публичный запрос, не требует авторизации
   const { data: topTunes, isLoading, error } = useQuery<Song[]>({
     queryKey: ["/api/songs/top-tunes?limit=6"],
   });

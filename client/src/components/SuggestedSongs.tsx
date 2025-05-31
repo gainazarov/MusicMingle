@@ -7,9 +7,10 @@ import { Play, Heart, MoreHorizontal } from "lucide-react";
 import { useState } from "react";
 
 export default function SuggestedSongs() {
-  const { playTrack, isPlaying, currentTrack } = useMusicPlayer();
+  const { playTrack } = useMusicPlayer();
   const [hoveredSong, setHoveredSong] = useState<number | null>(null);
 
+  // Публичный запрос, не требует авторизации
   const { data: songs, isLoading, error } = useQuery<Song[]>({
     queryKey: ["/api/songs/suggested"],
   });

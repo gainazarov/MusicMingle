@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "db:push",
+			"command": "npm run db:push"
+		}
+	]
+}

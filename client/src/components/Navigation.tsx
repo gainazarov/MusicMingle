@@ -7,8 +7,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Menu, Search, Music, X } from "lucide-react";
 
 export default function Navigation() {
-  const [location] = useLocation();
-  const { isAuthenticated, user } = useAuth();
+  const [location, setLocation] = useLocation();
+  type User = {
+    firstName?: string;
+    email?: string;
+    profileImageUrl?: string;
+  };
+  // Передаём redirectOn401: false, если Navigation используется на публичной странице
+  // Для универсальности: определяем публичность через пропс или контекст, либо временно отключаем редирект всегда
+  const { isAuthenticated, user } = useAuth(false) as { isAuthenticated: boolean; user?: User };
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [language, setLanguage] = useState("en");
 
@@ -18,6 +25,19 @@ export default function Navigation() {
     { href: "/playlists", label: "Playlists" },
     { href: "/upload", label: "Upload" },
   ];
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      // Если используете localStorage/cookie для токена, очистите здесь
+      setLocation("/login");
+    } catch (e) {
+      setLocation("/login");
+    }
+  }
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect-strong">
@@ -115,7 +135,7 @@ export default function Navigation() {
                 <Button 
                   variant="ghost" 
                   className="text-white hover:text-[#FB6E1D] transition-colors"
-                  onClick={() => window.location.href = "/api/logout"}
+                  onClick={handleLogout}
                 >
                   Logout
                 </Button>
