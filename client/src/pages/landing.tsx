@@ -11,8 +11,13 @@ export default function Landing() {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="hero-gradient min-h-screen flex items-center pt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="hero-gradient min-h-screen flex items-center pt-16 relative overflow-hidden">
+        {/* Floating Orbs */}
+        <div className="floating-orb w-64 h-64 top-20 left-10 animate-orb-float"></div>
+        <div className="floating-orb-blue w-48 h-48 top-40 right-20 animate-orb-float" style={{ animationDelay: '2s' }}></div>
+        <div className="floating-orb-yellow w-32 h-32 bottom-32 left-1/4 animate-orb-float" style={{ animationDelay: '4s' }}></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <motion.div 
@@ -28,13 +33,13 @@ export default function Landing() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.2 }}
                 >
-                  <span className="bg-gradient-to-r from-[#FB6E1D] via-[#F8DE6F] to-[#1CDBFF] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#FB6E1D] via-[#F8DE6F] to-[#1CDBFF] bg-clip-text text-transparent animate-gradient bg-[length:200%_200%]">
                     Experience
                   </span>
                   <br />
                   <span className="neon-text text-white">Music Like</span>
                   <br />
-                  <span className="bg-gradient-to-r from-[#1CDBFF] to-[#FB6E1D] bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-r from-[#1CDBFF] to-[#FB6E1D] bg-clip-text text-transparent animate-gradient bg-[length:200%_200%]">
                     Never Before
                   </span>
                 </motion.h1>

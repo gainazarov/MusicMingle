@@ -1,0 +1,69 @@
+Create a modern and visually immersive **frontend-only web music application** called **BeatFlow**.
+
+🎨 **Design Requirements:**
+- The design must be **enhanced and polished**, inspired by bold gradients, glowing UI, minimalism, and futuristic aesthetics — similar to the reference images.
+- Use custom animated elements and smooth transitions with **Framer Motion**.
+- Typography: Use **PP Neue Montreal** or similar geometric sans-serif.
+- Color palette:
+  - Orange: `#FB6E1D`
+  - Yellow: `#F8DE6F`
+  - Light Blue: `#1CDBFF`
+  - Dark Green: `#040A06`
+  - White: `#FFFFFF`
+- Dark mode only, optimized for vibrant colors and readability.
+- Fully responsive design (desktop/tablet/mobile).
+- Animations should feel fluid and lightweight.
+
+⚙️ **Architecture:**
+- Build the frontend using **React** (or **Next.js App Router** if preferred).
+- The project must be cleanly structured and **ready to connect with a backend** in the future:
+  - Include mock API services (`/services/api.js`) to simulate backend calls.
+  - Use state management (e.g., Zustand or Redux) to manage app data.
+  - Authentication flow should be built with placeholder logic and fake responses, but structured in a way that it can later be replaced with real API calls (using Axios or fetch).
+  - Components must be reusable and modular (e.g., `<SongCard />`, `<PlaylistItem />`, `<Header />`, etc).
+
+📄 **Pages to Create:**
+1. **Home Page** (`/`)
+   - Hero section with glowing visuals
+   - Suggested tracks / top charts
+   - CTA to download app
+   - Player preview
+
+2. **Song Page** (`/songs/:id`)
+   - Song title, artist, duration, album cover
+   - Play/pause button
+   - Add to playlist / favorite
+
+3. **Playlist Page** (`/playlists/:id`)
+   - Playlist cover, title, description
+   - List of songs
+   - Play all, shuffle, reorder (UI only)
+
+4. **Login Page** (`/login`)
+5. **Register Page** (`/register`)
+6. **Favorites Page** (`/favorites`)
+   - List of favorite songs and playlists
+
+7. **404 Page**
+8. **User Profile Page** (`/profile`)
+   - Show user info, uploaded songs (mocked), playlists
+
+9. **Library Page** (`/library`)
+   - All user’s content categorized
+
+🎧 **Music Player Component**:
+- Fixed audio player at bottom of screen
+- Include play/pause, next, previous, volume, progress bar
+- Style matches overall UI (glow, gradients, minimal)
+
+📦 **Project Structure:**
+- `/components`: Reusable UI components
+- `/pages` or `/app`: Route-based structure
+- `/styles`: Global styles + Tailwind config (or CSS modules)
+- `/services`: API abstraction layer (with mocks)
+- `/data`: Sample songs, users, playlists as JSON
+
+🧪 Include mock data (5+ songs, 2 playlists, 1 user) to simulate the real app.
+No backend functionality should be implemented — only prepare the frontend architecture as if it will later connect to a backend.
+
+Deploy the result in Replit so it runs independently as a frontend-only web app.

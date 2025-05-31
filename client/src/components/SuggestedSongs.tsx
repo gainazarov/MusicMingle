@@ -77,11 +77,12 @@ export default function SuggestedSongs() {
             {songs?.map((song, index) => (
               <motion.div
                 key={song.id}
-                className="glass-effect rounded-xl p-4 flex items-center space-x-4 group hover:bg-white/5 transition-all duration-300 cursor-pointer"
+                className="song-card rounded-xl p-4 flex items-center space-x-4 group cursor-pointer"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
+                whileHover={{ x: 8 }}
                 onMouseEnter={() => setHoveredSong(song.id)}
                 onMouseLeave={() => setHoveredSong(null)}
                 onClick={() => handlePlaySong(song)}

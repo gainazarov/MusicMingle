@@ -49,7 +49,7 @@ export default function MusicPlayer() {
   return (
     <AnimatePresence>
       <motion.div 
-        className="fixed bottom-0 left-0 right-0 glass-effect border-t border-[#FB6E1D]/20 z-40"
+        className="fixed bottom-0 left-0 right-0 glass-effect-strong border-t border-[#FB6E1D]/30 z-40"
         initial={{ y: 100 }}
         animate={{ y: 0 }}
         exit={{ y: 100 }}
