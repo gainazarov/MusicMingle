@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import Navigation from "@/components/Navigation";
 import SuggestedSongs from "@/components/SuggestedSongs";
 import TopTunes from "@/components/TopTunes";
+import Avatar3D from "@/components/Avatar3D";
 import { Button } from "@/components/ui/button";
 import { Music, Play, Download, Star, Users, TrendingUp } from "lucide-react";
 
@@ -100,83 +101,13 @@ export default function Landing() {
               </motion.div>
             </motion.div>
             
-            {/* Right Content - 3D Avatar */}
+            {/* Right Content - Enhanced 3D Avatar */}
             <motion.div 
-              className="flex justify-center lg:justify-end"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
-              <div className="relative">
-                <motion.div 
-                  className="w-80 h-80 relative animate-float"
-                  animate={{ 
-                    y: [0, -10, 0],
-                    rotateY: [0, 5, 0, -5, 0]
-                  }}
-                  transition={{ 
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                >
-                  {/* Main avatar circle */}
-                  <div className="w-full h-full rounded-full glass-effect animate-pulse-glow flex items-center justify-center">
-                    <div className="text-8xl text-[#FB6E1D]">
-                      <Music className="w-32 h-32" />
-                    </div>
-                  </div>
-                  
-                  {/* Floating music notes */}
-                  <motion.div 
-                    className="absolute -top-4 -right-4 text-2xl text-[#F8DE6F]"
-                    animate={{ 
-                      y: [0, -15, 0],
-                      rotate: [0, 10, 0]
-                    }}
-                    transition={{ 
-                      duration: 2,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    <Music className="w-8 h-8" />
-                  </motion.div>
-                  <motion.div 
-                    className="absolute -bottom-4 -left-4 text-xl text-[#1CDBFF]"
-                    animate={{ 
-                      y: [0, -10, 0],
-                      rotate: [0, -10, 0]
-                    }}
-                    transition={{ 
-                      duration: 2.5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 0.5
-                    }}
-                  >
-                    <Music className="w-6 h-6" />
-                  </motion.div>
-                  <motion.div 
-                    className="absolute top-10 -left-8 text-lg text-[#FB6E1D]"
-                    animate={{ 
-                      y: [0, -12, 0],
-                      x: [0, 5, 0]
-                    }}
-                    transition={{ 
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: 1
-                    }}
-                  >
-                    <Music className="w-5 h-5" />
-                  </motion.div>
-                </motion.div>
-                
-                {/* Glow effects */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-[#FB6E1D]/20 to-[#1CDBFF]/20 animate-glow -z-10"></div>
-              </div>
+              <Avatar3D />
             </motion.div>
           </div>
         </div>
